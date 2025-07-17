@@ -1,0 +1,21 @@
+{
+  "name": "Dent Pilot",
+  "short_name": "Dent Pilot",
+  "icons": [
+    {
+      "src": "/https://dentpilot.dev/public/assets/images/favicon.ico/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/https://dentpilot.dev/public/assets/images/favicon.ico/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#616161",
+  "background_color": "#616161",
+  "display": "standalone"
+}
