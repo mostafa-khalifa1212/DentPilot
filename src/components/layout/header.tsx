@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { useBooking } from "@/contexts/BookingContext"
 
 const navigation = [
   { name: "Services", href: "#services" },
@@ -16,6 +17,7 @@ const navigation = [
 ]
 
 export function Header() {
+  const { setShowBooking } = useBooking();
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showHeader, setShowHeader] = useState(true)
@@ -53,7 +55,7 @@ export function Header() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         isScrolled
-          ? "bg-[#020617]/95 backdrop-blur-md border-b border-slate-800/50"
+          ? "bg-slate-950/95 backdrop-blur-md border-b border-slate-800/50"
           : "bg-transparent",
         showHeader
           ? "translate-y-0"
@@ -76,7 +78,7 @@ export function Header() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent-blue focus:text-accent-blue focus:outline-none"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent-blue focus:text-accent-blue focus:outline-hidden"
             >
               {item.name}
             </Link>
@@ -89,18 +91,16 @@ export function Header() {
             size="sm" 
             glow
             className="animate-pulse-glow"
-            onClick={() => {
-              const element = document.querySelector('#contact');
-              element?.scrollIntoView({ behavior: 'smooth' });
-            }}
+            onClick={() => setShowBooking(true)}
           >
             Book a Call
           </Button>
+          
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-muted-foreground hover:text-foreground focus:outline-none focus:text-foreground"
+          className="md:hidden p-2 text-muted-foreground hover:text-foreground focus:outline-hidden focus:text-foreground"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle navigation menu"
         >
@@ -114,13 +114,13 @@ export function Header() {
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-800/50 bg-[#020617]/95 backdrop-blur-md">
+        <div className="md:hidden border-t border-slate-800/50 bg-slate-950/95 backdrop-blur-md">
           <div className="container-custom py-4 space-y-4">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="block text-sm font-medium text-muted-foreground transition-colors hover:text-accent-blue focus:text-accent-blue focus:outline-none"
+                className="block text-sm font-medium text-muted-foreground transition-colors hover:text-accent-blue focus:text-accent-blue focus:outline-hidden"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.name}
@@ -132,8 +132,7 @@ export function Header() {
                 glow 
                 className="w-full"
                 onClick={() => {
-                  const element = document.querySelector('#contact');
-                  element?.scrollIntoView({ behavior: 'smooth' });
+                  setShowBooking(true);
                   setIsMobileMenuOpen(false);
                 }}
               >

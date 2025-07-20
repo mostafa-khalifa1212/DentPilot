@@ -3,7 +3,8 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight, Sparkles, MessageSquare } from "lucide-react"
+import { useBooking } from "@/contexts/BookingContext"
 
 interface CTASectionProps {
   title?: string
@@ -26,6 +27,16 @@ export function CTASection({
   variant = "default",
   showSparkles = true,
 }: CTASectionProps) {
+  const { setShowBooking } = useBooking();
+  
+  const openChat = () => {
+    // Trigger chat widget to open
+    const chatButton = document.querySelector('[data-chat-trigger]') as HTMLElement;
+    if (chatButton) {
+      chatButton.click();
+    }
+  };
+
   return (
     <section className={variant === "compact" ? "py-16" : "section-padding"}>
       <div className="container-custom">
@@ -34,10 +45,10 @@ export function CTASection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.6, 0.01, 0.05, 0.9] }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent-blue via-accent-blue/90 to-accent-green p-1"
+          className="relative overflow-hidden rounded-3xl bg-linear-to-br from-accent-blue via-accent-blue/90 to-accent-green p-1"
         >
           {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/20 via-transparent to-accent-green/20" />
+          <div className="absolute inset-0 bg-linear-to-br from-accent-blue/20 via-transparent to-accent-green/20" />
           {showSparkles && (
             <>
               <motion.div
@@ -69,7 +80,7 @@ export function CTASection({
           )}
 
           {/* Content Container */}
-          <div className="relative bg-[#020617]/95 backdrop-blur-sm rounded-3xl border border-white/10">
+          <div className="relative bg-slate-950/95 backdrop-blur-sm rounded-3xl border border-white/10">
             <div className={variant === "compact" ? "p-8 md:p-12" : "p-12 md:p-16"}>
               <div className="text-center max-w-4xl mx-auto">
                 {/* Icon */}
@@ -79,7 +90,7 @@ export function CTASection({
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2, duration: 0.5 }}
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-accent-blue to-accent-green mb-6"
+                    className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-r from-accent-blue to-accent-green mb-6"
                   >
                     <Sparkles className="w-8 h-8 text-white" />
                   </motion.div>
@@ -133,9 +144,9 @@ export function CTASection({
                     <Button 
                       size={variant === "compact" ? "lg" : "xl"} 
                       variant="outline" 
-                      asChild
+                      onClick={() => setShowBooking(true)}
                     >
-                      <Link href={secondaryHref}>{secondaryText}</Link>
+                      {secondaryText}
                     </Button>
                   )}
                 </motion.div>

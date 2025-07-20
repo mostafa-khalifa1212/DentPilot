@@ -96,7 +96,7 @@ export default function TestWebhook() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white p-8">
+    <div className="min-h-screen bg-slate-950 text-white p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Webhook Test Page</h1>
         
@@ -113,7 +113,7 @@ export default function TestWebhook() {
             <button
               onClick={testWebhook}
               disabled={loading || !message.trim()}
-              className="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-green rounded disabled:opacity-50"
+              className="px-6 py-2 bg-linear-to-r from-accent-blue to-accent-green rounded disabled:opacity-50"
             >
               {loading ? 'Testing...' : 'Test Webhook'}
             </button>

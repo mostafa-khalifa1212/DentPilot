@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Link from "next/link"
 import { Card, CardContent } from "@/components/ui"
 import { 
   Users, 
@@ -14,69 +15,95 @@ import {
   MessageSquare,
   Settings,
   Zap,
-  Target
+  Target,
+  ArrowRight,
+  PhoneCall
 } from "lucide-react"
 
 const features = [
   {
-    icon: Target,
-    title: "Lead Generation & Nurturing",
-    description: "Google Maps scraping, lead capture automation, nurturing sequences, and social media lead sync to fill your pipeline.",
-  },
-  {
-    icon: Calendar,
+    icon: PhoneCall,
     title: "AI Receptionist",
     description: "Never miss a call again, booking appointments and answering patient phone calls on autopilot, using professional AI Voice assistants tailored to your clinic specifically.",
-  },
-  {
-    icon: UserPlus,
-    title: "Patient Onboarding",
-    description: "Pre-visit instructions, digital medical forms, ID & insurance uploads, and automated patient preparation.",
-  },
-  {
-    icon: Stethoscope,
-    title: "In-Treatment Experience",
-    description: "QR-code form autofill, digital signatures, and seamless in-clinic workflow automation.",
+    isTopSeller: true,
+    detailsLink: "/services/ai-receptionist",
   },
   {
     icon: RefreshCw,
     title: "Post-Visit Follow-up",
     description: "Treatment reminders, review collection, missed appointment reactivation, and patient retention automation.",
+    isTopSeller: true,
+    detailsLink: "/services/patient-followup",
+  },
+  {
+    icon: UserPlus,
+    title: "Patient Onboarding",
+    description: "Pre-visit instructions, digital medical forms, ID & insurance uploads, and automated patient preparation.",
+    isTopSeller: true,
+    detailsLink: "/services/patient-onboarding",
+  },
+  {
+    icon: Target,
+    title: "Lead Generation & Nurturing",
+    description: "Google Maps scraping, lead capture automation, nurturing sequences, and social media lead sync to fill your pipeline.",
+    isTopSeller: false,
+    detailsLink: null,
+  },
+  {
+    icon: Stethoscope,
+    title: "In-Treatment Experience",
+    description: "QR-code form autofill, digital signatures, and seamless in-clinic workflow automation.",
+    isTopSeller: false,
+    detailsLink: null,
   },
   {
     icon: UserCheck,
     title: "Patient Reactivation",
     description: "Inactive patient campaigns, birthday/anniversary automations, and AI-generated win-back sequences.",
+    isTopSeller: false,
+    detailsLink: null,
   },
   {
     icon: Bell,
     title: "Team Automation",
     description: "Daily schedule digests, Slack/WhatsApp alerts, automated invoicing, and internal workflow optimization.",
+    isTopSeller: false,
+    detailsLink: null,
   },
   {
     icon: BarChart3,
     title: "Analytics & Reporting",
     description: "Weekly KPI dashboards, lead source analytics, revenue tracking, and performance insights.",
+    isTopSeller: false,
+    detailsLink: null,
   },
   {
     icon: MessageSquare,
     title: "Live Chat & Chatbot",
     description: "AI chatbot for FAQs, appointment booking, and 24/7 patient support automation.",
+    isTopSeller: false,
+    detailsLink: null,
   },
   {
     icon: Settings,
     title: "Seamless Integrations",
     description: "Connect with Google Calendar, Notion, Sheets, Stripe, Gmail, Typeform, Calendly, Slack, and more.",
+    isTopSeller: false,
+    detailsLink: null,
   },
   {
     icon: Zap,
     title: "HIPAA Compliant",
     description: "Bank-grade security with SOC 2 compliance, end-to-end encryption, and audit trails for patient data.",
+    isTopSeller: false,
+    detailsLink: null,
   },
   {
     icon: Users,
     title: "Built by Dentists",
     description: "AI systems designed specifically for dental practices by dental professionals who understand your workflow.",
+    isTopSeller: false,
+    detailsLink: null,
   },
 ]
 
@@ -96,16 +123,12 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.6, 0.01, 0.05, 0.9],
-    },
   },
 }
 
 export function FeatureGrid() {
   return (
-    <section id="services" className="section-padding bg-[#020617]/50">
+    <section id="services" className="section-padding bg-slate-950/50">
       <div className="container-custom">
         {/* Header */}
         <motion.div
@@ -147,10 +170,19 @@ export function FeatureGrid() {
                   className="h-full group cursor-default"
                 >
                   <CardContent className="p-8">
+                    {/* Top Seller Badge */}
+                    {feature.isTopSeller && (
+                      <div className="absolute top-4 right-4">
+                        <div className="inline-flex items-center px-2 py-1 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-xs font-medium text-white">
+                          🔥 Top Seller
+                        </div>
+                      </div>
+                    )}
+
                     {/* Icon */}
                     <div className="mb-6">
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-accent-blue to-accent-green p-0.5 mb-4">
-                        <div className="w-full h-full rounded-xl bg-[#020617] flex items-center justify-center group-hover:bg-transparent transition-colors duration-300">
+                      <div className="w-14 h-14 rounded-xl bg-linear-to-r from-accent-blue to-accent-green p-0.5 mb-4">
+                        <div className="w-full h-full rounded-xl bg-slate-950 flex items-center justify-center group-hover:bg-transparent transition-colors duration-300">
                           <Icon className="w-7 h-7 text-accent-blue group-hover:text-white transition-colors duration-300" />
                         </div>
                       </div>
@@ -160,9 +192,22 @@ export function FeatureGrid() {
                     <h3 className="text-h3 font-semibold mb-3 group-hover:text-accent-blue transition-colors duration-300">
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                       {feature.description}
                     </p>
+
+                    {/* More Details Button */}
+                    {feature.detailsLink && (
+                      <div className="mt-auto">
+                        <Link 
+                          href={feature.detailsLink}
+                          className="inline-flex items-center text-sm font-medium text-accent-blue hover:text-accent-green transition-colors duration-300 group/link"
+                        >
+                          More details
+                          <ArrowRight className="ml-1 w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" />
+                        </Link>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -184,7 +229,7 @@ export function FeatureGrid() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-accent-blue to-accent-green rounded-full text-white font-medium shadow-glow hover:shadow-2xl transition-all duration-300"
+            className="inline-flex items-center px-8 py-4 bg-linear-to-r from-accent-blue to-accent-green rounded-full text-white font-medium shadow-glow hover:shadow-2xl transition-all duration-300"
           >
             Explore Our Solutions
           </motion.button>

@@ -4,6 +4,8 @@ import "./globals.css"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import ChatWidget from "@/components/sections/chat-widget"
+import { BookingProvider } from "@/contexts/BookingContext"
+import { GlobalBookingModal } from "@/components/ui"
 import { constructMetadata, generateOrganizationSchema, generateWebsiteSchema, generateServiceSchema, generateFAQSchema } from "@/lib/seo"
 
 const inter = Inter({
@@ -42,12 +44,15 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased dark`}>
-        <div className="relative flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <ChatWidget />
-        </div>
+        <BookingProvider>
+          <div className="relative flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <ChatWidget />
+            <GlobalBookingModal />
+          </div>
+        </BookingProvider>
       </body>
     </html>
   )

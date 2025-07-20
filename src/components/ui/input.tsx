@@ -29,7 +29,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={type}
             className={cn(
               "flex h-12 w-full rounded-xl border border-slate-700 bg-[#0f172a]/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground backdrop-blur-sm transition-all duration-300",
-              "focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20",
+              "focus:border-accent-blue focus:outline-hidden focus:ring-2 focus:ring-accent-blue/20",
               "disabled:cursor-not-allowed disabled:opacity-50",
               error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
               leftIcon && "pl-10",

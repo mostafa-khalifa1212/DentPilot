@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, ChangeEvent, KeyboardEvent, useRef, RefObject } from 'react'
+import { useState, ChangeEvent, KeyboardEvent, useRef, RefObject, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, MessageCircle, Send } from 'lucide-react'
 import useOutsideClick from '../../hooks/useOutsideClick'
+import { BrainAvatar } from '@/components/ui'
+
 
 type Message = {
   type: 'user' | 'bot'
@@ -17,6 +19,7 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const chatRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   useOutsideClick(chatRef as RefObject<HTMLElement>, () => {
     if (isOpen) setIsOpen(false)
   })
@@ -33,33 +36,70 @@ export default function ChatWidget() {
     try {
       console.log('Sending message to webhook:', userMessage)
       
-      const response = await fetch('https://mostafakhalifa1212.app.n8n.cloud/webhook-test/b7b63b95-aa55-48e1-b9b2-83d472f136b2', {
+      // Try different request formats
+      const requestBody = { 
+        text: userMessage,
+        message: userMessage,
+        input: userMessage,
+        query: userMessage
+      };
+      
+      console.log('Request body:', requestBody)
+      
+      // Use test webhook for now until production is fixed
+      let response;
+      response = await fetch('http://localhost:5678/webhook-test/b7b63b95-aa55-48e1-b9b2-83d472f136b2', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ 
-          message: userMessage,
-          timestamp: new Date().toISOString(),
-          sessionId: 'dentpilot-chat-' + Date.now()
-        }),
+        body: JSON.stringify({ message: userMessage }),
       })
 
       console.log('Response status:', response.status)
       console.log('Response headers:', response.headers)
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+        // Try to get error details from response
+        let errorDetails = '';
+        try {
+          const errorText = await response.text();
+          errorDetails = ` - ${errorText}`;
+        } catch (e) {
+          errorDetails = ' - Could not read error response';
+        }
+        throw new Error(`HTTP error! status: ${response.status}${errorDetails}`)
+      } 
 
-      const data = await response.json()
-      console.log('Response data:', data)
+      // Handle different response types
+      let data;
+      const responseText = await response.text();
+      console.log('Response text length:', responseText.length);
+      console.log('Response text:', responseText);
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      try {
+        data = JSON.parse(responseText);
+        console.log('Response data:', data);
+        
+        // Handle array responses (like [{"output": "..."}])
+        if (Array.isArray(data) && data.length > 0) {
+          data = data[0]; // Take the first item from the array
+          console.log('Extracted first item from array:', data);
+        }
+      } catch (jsonError) {
+        console.log('Response is not JSON, treating as plain text');
+        data = { output: responseText };
+      }
 
       // Handle different response formats
       let botReply = 'Hi! I\'m Dent Pilot Assistant. How can I help you today?'
       
-      if (data.reply) {
+      if (data.output) {
+        botReply = data.output
+      } else if (data.reply) {
         botReply = data.reply
       } else if (data.message) {
         botReply = data.message
@@ -120,6 +160,15 @@ export default function ChatWidget() {
     }
   }
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  // Auto-scroll when messages change or loading state changes
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, loading])
+
   const toggleChat = () => {
     setIsOpen(!isOpen)
     if (!isOpen && messages.length === 0) {
@@ -158,16 +207,14 @@ export default function ChatWidget() {
             }}
             transition={{ 
               duration: 0.3, 
-              ease: [0.6, 0.01, 0.05, 0.9] 
+              ease: "easeOut"
             }}
-            className="fixed bottom-4 right-4 z-50 bg-[#020617] border border-white/10 shadow-2xl backdrop-blur-xl"
+            className="fixed bottom-4 right-4 z-50 bg-slate-950 border border-white/10 shadow-2xl backdrop-blur-xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/10">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-accent-blue to-accent-green flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5 text-white" />
-                </div>
+                <BrainAvatar isLoading={loading} size="md" />
                 <div>
                   <h3 className="font-semibold text-white">Dent Pilot Assistant</h3>
                   <p className="text-xs text-muted-foreground">AI-powered support</p>
@@ -189,12 +236,17 @@ export default function ChatWidget() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} items-end space-x-2`}
                 >
+                  {msg.type === 'bot' && (
+                    <div className="flex-shrink-0">
+                      <BrainAvatar isLoading={false} size="sm" />
+                    </div>
+                  )}
                   <div
                     className={`max-w-[80%] p-3 rounded-2xl ${
                       msg.type === 'user'
-                        ? 'bg-gradient-to-r from-accent-blue to-accent-green text-white'
+                        ? 'bg-linear-to-r from-accent-blue to-accent-green text-white'
                         : 'bg-white/10 text-white'
                     }`}
                   >
@@ -206,8 +258,11 @@ export default function ChatWidget() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex justify-start"
+                  className="flex justify-start items-end space-x-2"
                 >
+                  <div className="flex-shrink-0">
+                    <BrainAvatar isLoading={true} size="sm" />
+                  </div>
                   <div className="bg-white/10 text-white p-3 rounded-2xl">
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
@@ -217,13 +272,14 @@ export default function ChatWidget() {
                   </div>
                 </motion.div>
               )}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
             <div className="p-4 border-t border-white/10">
               <div className="flex space-x-2">
                 <input
-                  className="flex-1 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent"
+                  className="flex-1 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white placeholder-white/50 focus:outline-hidden focus:ring-2 focus:ring-accent-blue focus:border-transparent"
                   placeholder="Ask me anything..."
                   value={input}
                   onChange={handleInputChange}
@@ -232,7 +288,7 @@ export default function ChatWidget() {
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || loading}
-                  className="w-10 h-10 rounded-full bg-gradient-to-r from-accent-blue to-accent-green flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all"
+                  className="w-10 h-10 rounded-full bg-linear-to-r from-accent-blue to-accent-green flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition-all"
                 >
                   <Send className="w-4 h-4 text-white" />
                 </button>
@@ -249,9 +305,10 @@ export default function ChatWidget() {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.6, 0.01, 0.05, 0.9] }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
             onClick={toggleChat}
-            className="fixed bottom-4 right-4 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-accent-blue to-accent-green shadow-glow hover:shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+            data-chat-trigger
+            className="fixed bottom-4 right-4 z-40 w-14 h-14 rounded-full bg-linear-to-r from-accent-blue to-accent-green shadow-glow hover:shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110"
           >
             <MessageCircle className="w-6 h-6 text-white" />
           </motion.button>

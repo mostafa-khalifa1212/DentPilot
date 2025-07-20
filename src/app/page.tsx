@@ -1,4 +1,4 @@
-import { HeroSection, FeatureGrid, CTASection, FaqAccordion, IntegrationTools } from "@/components/sections"
+import { HeroSection, FeatureGrid, CTASection, FaqAccordion, IntegrationTools, AutomationSetupSection } from "@/components/sections"
 import { constructMetadata, generateServiceSchema } from "@/lib/seo"
 
 export const metadata = constructMetadata({
@@ -14,6 +14,9 @@ export default function HomePage() {
       
       {/* Integration Tools Section */}
       <IntegrationTools />
+      
+      {/* Automation Setup Section */}
+      <AutomationSetupSection />
       
       {/* Feature Grid Section */}
       <FeatureGrid />

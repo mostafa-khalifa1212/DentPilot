@@ -26,19 +26,19 @@ const footerLinks = {
 const socialLinks = [
   { name: "Twitter", href: "https://twitter.com/autopilotai", icon: Twitter },
   { name: "LinkedIn", href: "https://linkedin.com/company/autopilotai", icon: Linkedin },
-  { name: "GitHub", href: "https://github.com/autopilotai", icon: Github },
-  { name: "Email", href: "mailto:hello@autopilotai.com", icon: Mail },
+  { name: "GitHub", href: "https://github.com/mostafa-khalifa1212/DentPilot", icon: Github },
+  { name: "Email", href: "mailto:support@dentpilot.dev", icon: Mail },
 ]
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-800/50 bg-[#020617]/50">
+    <footer className="border-t border-slate-800/50 bg-slate-950/50">
       <div className="container-custom py-16">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
           {/* Brand */}
           <div className="col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-4">
-              <Image src="/assets/images/DentPilotLogo.png" alt="Dent Pilot logo" width={200} height={100} className="h-18 w-25 rounded-lg" />
+              <Image src="/assets/images/DentPilotLogo.png" alt="Dent Pilot logo" width={300} height={100} className="rounded-lg" />
             </Link>
             <p className="text-sm text-muted-foreground mb-6 max-w-sm">
               Transform your business with cutting-edge AI automation. 

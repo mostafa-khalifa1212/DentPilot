@@ -3,6 +3,8 @@
 import { motion } from "framer-motion"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui"
 import { generateFAQSchema } from "@/lib/seo"
+import { useBooking } from "@/contexts/BookingContext"
+import { MessageSquare } from "lucide-react"
 
 const faqs = [
   {
@@ -60,14 +62,20 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.4,
-      ease: [0.6, 0.01, 0.05, 0.9],
-    },
   },
 }
 
 export function FaqAccordion() {
+  const { setShowBooking } = useBooking();
+  
+  const openChat = () => {
+    // Trigger chat widget to open
+    const chatButton = document.querySelector('[data-chat-trigger]') as HTMLElement;
+    if (chatButton) {
+      chatButton.click();
+    }
+  };
+
   return (
     <section id="faq" className="section-padding">
         <div className="container-custom">
@@ -76,7 +84,7 @@ export function FaqAccordion() {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: [0.6, 0.01, 0.05, 0.9] }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-center mb-16"
           >
             <h2 className="text-h1 font-bold mb-6">
@@ -123,7 +131,7 @@ export function FaqAccordion() {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ delay: 0.4, duration: 0.8, ease: [0.6, 0.01, 0.05, 0.9] }}
+            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
             className="text-center mt-16"
           >
             <div className="glass rounded-2xl p-8 border border-white/10 max-w-2xl mx-auto">
@@ -145,8 +153,18 @@ export function FaqAccordion() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center px-6 py-3 border border-accent-blue/50 text-accent-blue rounded-full font-medium hover:bg-accent-blue/10 transition-colors"
+                  onClick={() => setShowBooking(true)}
                 >
                   Schedule a Call
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center px-6 py-3 border border-accent-green/50 text-accent-green rounded-full font-medium hover:bg-accent-green/10 transition-colors"
+                  onClick={openChat}
+                >
+                  <MessageSquare className="mr-2 w-4 h-4" />
+                  Ask DentPilot AI
                 </motion.button>
               </div>
             </div>

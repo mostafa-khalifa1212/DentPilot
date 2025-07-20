@@ -18,7 +18,7 @@ export default function NotFound() {
           {/* 404 Number */}
           <div className="mb-8">
             <h1 className="text-9xl font-bold text-gradient mb-4">404</h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-accent-blue to-accent-green mx-auto rounded-full"></div>
+            <div className="w-24 h-1 bg-linear-to-r from-accent-blue to-accent-green mx-auto rounded-full"></div>
           </div>
 
           {/* Content */}

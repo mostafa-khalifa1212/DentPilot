@@ -26,7 +26,7 @@ export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-background to-slate-950" />
+      <div className="absolute inset-0 bg-linear-to-br from-slate-900 via-background to-slate-950" />
       
       {/* Animated background elements */}
       <div className="absolute inset-0">
@@ -135,24 +135,111 @@ We build AI-powered systems that answer questions, book appointments, follow up 
               }}
               className="relative z-10"
             >
-              {/* Dashboard Mockup */}
-              <div className="glass rounded-2xl p-6 border border-white/10 shadow-2xl">
-                <div className="flex items-center space-x-2 mb-4">
+              {/* Single Dashboard Mockup */}
+              <div className="glass rounded-2xl p-4 border border-white/10 shadow-2xl w-[700px] h-85">
+                <div className="flex items-center space-x-2 mb-3">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <div className="flex-1"></div>
+                  <div className="text-xs text-muted-foreground">DentPilot Dashboard</div>
                 </div>
-                <div className="space-y-4">
-                  <div className="h-8 bg-gradient-to-r from-accent-blue to-accent-green rounded opacity-80"></div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="h-16 bg-slate-800 rounded"></div>
-                    <div className="h-16 bg-slate-800 rounded"></div>
-                    <div className="h-16 bg-slate-800 rounded"></div>
+                
+                {/* Dashboard Content - Two Columns */}
+                <div className="flex space-x-4 h-full">
+                  {/* Left Side - Metrics */}
+                  <div className="flex-1 space-y-3">
+                    {/* Header Stats */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="bg-gradient-to-r from-accent-blue/20 to-accent-green/20 rounded-lg p-2 border border-accent-blue/30">
+                        <div className="text-xs text-accent-blue mb-1">Revenue</div>
+                        <div className="text-sm font-bold text-white">$12,450</div>
+                        <div className="text-xs text-green-400">+23% vs last month</div>
+                      </div>
+                      <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-2 border border-purple-500/30">
+                        <div className="text-xs text-purple-400 mb-1">Bookings</div>
+                        <div className="text-sm font-bold text-white">47</div>
+                        <div className="text-xs text-green-400">+8 today</div>
+                      </div>
+                      <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-lg p-2 border border-orange-500/30">
+                        <div className="text-xs text-orange-400 mb-1">Patients</div>
+                        <div className="text-sm font-bold text-white">1,247</div>
+                        <div className="text-xs text-green-400">+12 this week</div>
+                      </div>
+                      <div className="bg-gradient-to-r from-indigo-500/20 to-blue-500/20 rounded-lg p-2 border border-indigo-500/30">
+                        <div className="text-xs text-indigo-400 mb-1">AI Calls</div>
+                        <div className="text-sm font-bold text-white">89</div>
+                        <div className="text-xs text-green-400">98% accuracy</div>
+                      </div>
+                    </div>
+                    
+                    {/* Recent Activity */}
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground mb-1">Recent Activity</div>
+                      <div className="flex items-center space-x-2 text-xs">
+                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span className="text-muted-foreground">New booking: Sarah M. - 2:30 PM</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-xs">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                        <span className="text-muted-foreground">AI call completed: 98% accuracy</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-xs">
+                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                        <span className="text-muted-foreground">Follow-up sent: 15 patients</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <div className="h-4 bg-slate-800 rounded w-3/4"></div>
-                    <div className="h-4 bg-slate-800 rounded w-1/2"></div>
-                    <div className="h-4 bg-slate-800 rounded w-5/6"></div>
+
+                  {/* Right Side - Chart */}
+                  <div className="flex-1 flex flex-col">
+                    {/* Chart Title */}
+                    <div className="text-xs text-muted-foreground mb-2">Weekly Performance</div>
+                    
+                    {/* Chart Area */}
+                    <div className="flex-1 mb-6 pt-2 bg-gradient-to-br from-slate-800/30 to-slate-700/30 rounded-lg p-3 border border-white/10 relative h-80">
+                      {/* Y-axis label */}
+                      <div className="absolute top-1/2 pb-20 transform -translate-y-1/2 -rotate-90 text-xs text-muted-foreground whitespace-nowrap">
+                        Patient Bookings
+                      </div>
+                      
+                      {/* Chart bars */}
+                      <div className="flex items-end justify-between h-full ml-8 pb-4 space-x-2">
+                        <div className="flex flex-col items-center space-y-1">
+                          <div className="w-5 bg-accent-blue rounded-t-sm" style={{height: '60%', minHeight: '90px'}}></div>
+                          <div className="text-xs text-muted-foreground">Mon</div>
+                        </div>
+                        <div className="flex flex-col items-center space-y-1">
+                          <div className="w-5 bg-accent-green rounded-t-sm" style={{height: '80%', minHeight: '30px'}}></div>
+                          <div className="text-xs text-muted-foreground">Tue</div>
+                        </div>
+                        <div className="flex flex-col items-center space-y-1">
+                          <div className="w-5 bg-accent-blue rounded-t-sm" style={{height: '45%', minHeight: '60px'}}></div>
+                          <div className="text-xs text-muted-foreground">Wed</div>
+                        </div>
+                        <div className="flex flex-col items-center space-y-1">
+                          <div className="w-5 bg-accent-green rounded-t-sm" style={{height: '90%', minHeight: '50px'}}></div>
+                          <div className="text-xs text-muted-foreground">Thu</div>
+                        </div>
+                        <div className="flex flex-col items-center space-y-1">
+                          <div className="w-5 bg-accent-blue rounded-t-sm" style={{height: '70%', minHeight: '100px'}}></div>
+                          <div className="text-xs text-muted-foreground">Fri</div>
+                        </div>
+                        <div className="flex flex-col items-center space-y-1">
+                          <div className="w-5 bg-accent-green rounded-t-sm" style={{height: '85%', minHeight: '90px'}}></div>
+                          <div className="text-xs text-muted-foreground">Sat</div>
+                        </div>
+                        <div className="flex flex-col items-center space-y-1">
+                          <div className="w-5 bg-accent-blue rounded-t-sm" style={{height: '55%', minHeight: '60px'}}></div>
+                          <div className="text-xs text-muted-foreground">Sun</div>
+                        </div>
+                      </div>
+                      
+                      {/* X-axis label - moved up a bit */}
+                      <div className="text-center mb-2 ">
+                        <div className="text-xs text-muted-foreground">Days</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
