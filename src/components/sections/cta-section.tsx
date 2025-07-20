@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui"
-import { ArrowRight, Sparkles, MessageSquare } from "lucide-react"
+import { ArrowRight, Sparkles } from "lucide-react"
 import { useBooking } from "@/contexts/BookingContext"
 
 interface CTASectionProps {
@@ -23,19 +23,11 @@ export function CTASection({
   primaryText = "Start Free Trial",
   primaryHref = "#contact",
   secondaryText = "Schedule Demo",
-  secondaryHref = "#demo",
+
   variant = "default",
   showSparkles = true,
 }: CTASectionProps) {
   const { setShowBooking } = useBooking();
-  
-  const openChat = () => {
-    // Trigger chat widget to open
-    const chatButton = document.querySelector('[data-chat-trigger]') as HTMLElement;
-    if (chatButton) {
-      chatButton.click();
-    }
-  };
 
   return (
     <section className={variant === "compact" ? "py-16" : "section-padding"}>

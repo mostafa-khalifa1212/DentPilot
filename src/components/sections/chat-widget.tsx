@@ -47,8 +47,7 @@ export default function ChatWidget() {
       console.log('Request body:', requestBody)
       
       // Use test webhook for now until production is fixed
-      let response;
-      response = await fetch('http://localhost:5678/webhook-test/b7b63b95-aa55-48e1-b9b2-83d472f136b2', {
+      const response = await fetch('http://localhost:5678/webhook-test/b7b63b95-aa55-48e1-b9b2-83d472f136b2', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -66,7 +65,7 @@ export default function ChatWidget() {
         try {
           const errorText = await response.text();
           errorDetails = ` - ${errorText}`;
-        } catch (e) {
+        } catch {
           errorDetails = ' - Could not read error response';
         }
         throw new Error(`HTTP error! status: ${response.status}${errorDetails}`)
@@ -89,7 +88,7 @@ export default function ChatWidget() {
           data = data[0]; // Take the first item from the array
           console.log('Extracted first item from array:', data);
         }
-      } catch (jsonError) {
+      } catch {
         console.log('Response is not JSON, treating as plain text');
         data = { output: responseText };
       }

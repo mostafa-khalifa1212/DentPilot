@@ -189,7 +189,7 @@ export default function AIReceptionistPage() {
                 Transform Your <span className="text-gradient">Phone Operations</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Our AI receptionist doesn't just answer calls—it transforms your entire 
+                Our AI receptionist doesn&apos;t just answer calls—it transforms your entire 
                 patient communication strategy, leading to measurable improvements in 
                 efficiency and patient satisfaction.
               </p>
@@ -215,7 +215,7 @@ export default function AIReceptionistPage() {
                   <Phone className="w-16 h-16 text-accent-blue mx-auto mb-6" />
                   <h3 className="text-2xl font-bold mb-4">Live Demo</h3>
                   <p className="text-muted-foreground mb-6">
-                    See our AI receptionist in action with a personalized demo of your clinic's workflow.
+                    See our AI receptionist in action with a personalized demo of your clinic&apos;s workflow.
                   </p>
                   <Button size="lg" variant="outline" className="w-full">
                     Schedule Demo Call

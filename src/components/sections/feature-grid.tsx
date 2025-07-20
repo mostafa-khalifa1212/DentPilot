@@ -5,7 +5,6 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui"
 import { 
   Users, 
-  Calendar, 
   UserPlus, 
   Stethoscope, 
   RefreshCw, 

@@ -14,8 +14,7 @@ import {
     siWhatsapp,
     siN8n,
     siHubspot,
-    siMailchimp,
-    siQuickbooks
+
   } from 'simple-icons'
 import { Phone, ArrowRight} from 'lucide-react'
 import { useBooking } from '@/contexts/BookingContext'
@@ -70,7 +69,6 @@ export function IntegrationTools() {
                   <div className="w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all duration-300">
                     <span
                       className="w-8 h-8 integration-icon text-white group-hover:scale-110 transition-transform duration-300"
-                      // eslint-disable-next-line react/no-danger
                       dangerouslySetInnerHTML={{ __html: tool.icon.svg.replace(/fill=".*?"/g, 'fill="gray"') }}
                       style={{ display: "inline-block", width: "2rem", height: "2rem", color: "white" }}
                     />
@@ -98,7 +96,7 @@ export function AutomationSetupSection() {
     },
     {
       title: "Custom Tailored Knowledge Base",
-      description: "We create a comprehensive knowledge base tailored to your clinic's specific procedures, policies, prices  and patient information.",
+      description: "We create a comprehensive knowledge base tailored to your clinic&apos;s specific procedures, policies, prices  and patient information.",
       placeholder: "🧠",
     },
     {
@@ -122,7 +120,7 @@ export function AutomationSetupSection() {
             Our 4-Step <span className="text-gradient">Automation Setup</span>
           </h2>
           <p className="text-body text-muted-foreground max-w-2xl mx-auto">
-            We don't just install software—we transform your entire workflow with a proven process that ensures success.
+            We don&apos;t just install software—we transform your entire workflow with a proven process that ensures success.
           </p>
         </div>
 

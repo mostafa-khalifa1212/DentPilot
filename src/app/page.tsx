@@ -1,5 +1,5 @@
 import { HeroSection, FeatureGrid, CTASection, FaqAccordion, IntegrationTools, AutomationSetupSection } from "@/components/sections"
-import { constructMetadata, generateServiceSchema } from "@/lib/seo"
+import { constructMetadata } from "@/lib/seo"
 
 export const metadata = constructMetadata({
   title: "Dent Pilot - Transform Your Dental Practice with AI Automation",

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui"
-import { generateFAQSchema } from "@/lib/seo"
+
 import { useBooking } from "@/contexts/BookingContext"
 import { MessageSquare } from "lucide-react"
 

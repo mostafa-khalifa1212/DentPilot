@@ -148,7 +148,7 @@ export default function TestWebhook() {
             <li>• Ensure the webhook node is activated in your n8n workflow</li>
             <li>• Check n8n logs for any errors</li>
             <li>• Verify CORS settings in n8n if needed</li>
-            <li>• Make sure your n8n workflow returns JSON with a 'reply' field</li>
+            <li>• Make sure your n8n workflow returns JSON with a &apos;reply&apos; field</li>
           </ul>
         </div>
       </div>

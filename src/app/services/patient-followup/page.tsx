@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui"
-import { ArrowRight, RefreshCw, Heart, Users, Zap, TrendingUp, CheckCircle } from "lucide-react"
+import { ArrowRight, RefreshCw, Heart, Users, TrendingUp, CheckCircle } from "lucide-react"
 import { useBooking } from "@/contexts/BookingContext"
 
 export default function PatientFollowupPage() {
@@ -235,7 +235,7 @@ export default function PatientFollowupPage() {
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
                 Our patient nurturing workflows deliver concrete results that you can 
-                measure and track. See the impact on your practice's growth and patient satisfaction.
+                measure and track. See the impact on your practice&apos;s growth and patient satisfaction.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {benefits.map((benefit, index) => (
@@ -259,8 +259,8 @@ export default function PatientFollowupPage() {
                   <RefreshCw className="w-16 h-16 text-accent-blue mx-auto mb-6" />
                   <h3 className="text-2xl font-bold mb-4">Success Story</h3>
                   <p className="text-muted-foreground mb-6">
-                    "Our patient retention increased by 45% within 3 months of implementing 
-                    DentPilot's nurturing workflows. The automated follow-ups have been a game-changer."
+                    &quot;Our patient retention increased by 45% within 3 months of implementing 
+                    DentPilot&apos;s nurturing workflows. The automated follow-ups have been a game-changer.&quot;
                   </p>
                   <div className="text-sm text-muted-foreground">
                     — Dr. Sarah Johnson, Smile Dental Clinic

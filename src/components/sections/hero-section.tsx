@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui"
 import { ArrowRight, Zap, TrendingUp, Shield } from "lucide-react"
-import Image from "next/image"
+
 
 
 const features = [

@@ -162,7 +162,7 @@ export default function BookingStepperForm({ onClose }: { onClose?: () => void }
           });
           setError(data.message || "An unexpected error occurred");
         }
-      } catch (err: any) {
+      } catch {
         // Network error
         showAlert({
           type: 'error',

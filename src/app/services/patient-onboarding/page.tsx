@@ -300,7 +300,7 @@ export default function PatientOnboardingPage() {
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
                 Our patient onboarding automation delivers concrete results that 
-                you can measure and track. See the impact on your clinic's efficiency 
+                you can measure and track. See the impact on your clinic&apos;s efficiency 
                 and patient satisfaction.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -325,9 +325,9 @@ export default function PatientOnboardingPage() {
                   <UserPlus className="w-16 h-16 text-accent-blue mx-auto mb-6" />
                   <h3 className="text-2xl font-bold mb-4">Success Story</h3>
                   <p className="text-muted-foreground mb-6">
-                    "Our patient check-in time went from 15 minutes to just 3 minutes. 
+                    &quot;Our patient check-in time went from 15 minutes to just 3 minutes. 
                     Patients love the digital experience, and our staff can focus on 
-                    providing care instead of paperwork."
+                    providing care instead of paperwork.&quot;
                   </p>
                   <div className="text-sm text-muted-foreground">
                     — Dr. Michael Chen, Bright Smile Dental
