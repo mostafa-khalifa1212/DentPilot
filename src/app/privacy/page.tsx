@@ -36,7 +36,7 @@ export default function PrivacyPolicy() {
       <p className="mb-4">If you have any questions about this Privacy Policy or your data, please contact us at:</p>
       <ul className="mb-4 ml-6">
         <li>Dent Pilot</li>
-        <li>1 Mohamed Sebaee St, New Nozha, El Nozha, Cairo Governorate 11843, Egypt</li>
+        <li>Remote</li>
         <li>Email: <a href="mailto:support@dentpilot.dev" className="text-accent-blue underline">support@dentpilot.dev</a> or <a href="mailto:hello@dentpilot.dev" className="text-accent-blue underline">hello@dentpilot.dev</a></li>
       </ul>
       <h2 className="text-2xl font-semibold mt-8 mb-4">9. Changes to This Policy</h2>

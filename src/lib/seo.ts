@@ -57,7 +57,7 @@ export function constructMetadata({
       siteName: siteConfig.name,
       images: [
         {
-          url: ogImage,
+          url: "/assets/images/DentPilotLogo.png",
           width: 1200,
           height: 630,
           alt: title,
@@ -104,24 +104,32 @@ export const generateServiceSchema = () => {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Process Automation",
-            description: "Automate repetitive business processes with AI",
+            name: "Patient Onboarding",
+            description: "Automatically send personalized onboarding messages to your new patients, get their medical history, reason for visit, send pre-visit instructions, reminders and more.",
           },
         },
         {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "AI Integration",
-            description: "Seamlessly integrate AI into existing workflows",
+            name: "AI 24/7 Live Chatbot",
+            description: "Answers all of your patients questions and book appointments, tailored to your clinic's policies, open time slots and prices.",
           },
         },
         {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Workflow Optimization",
-            description: "Optimize business workflows using artificial intelligence",
+            name: "AI Voice Call Receptionist",
+            description: "Answer all of your patients' calls and schedule appointments with our AI voice call receptionist, just like a professional receptionist that doesnt get tired or make mistakes, so no missed calls from now on, and it's much cheaper than a normal receptionist!",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Patient Reactivation And Followup",
+            description: "Reactivate patients that haven't visited in a while, and follow up with them to get them back to your clinic, get feedback, and more.",
           },
         },
       ],
@@ -136,22 +144,11 @@ export const generateLocalBusinessSchema = () => {
     name: siteConfig.name,
     description: siteConfig.description,
     url: siteConfig.url,
-    telephone: "+1-555-AUTOPILOT",
     address: {
-      "@type": "PostalAddress",
-      streetAddress: "123 Innovation Drive",
-      addressLocality: "San Francisco",
-      addressRegion: "CA",
-      postalCode: "94105",
-      addressCountry: "US",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: "37.7749",
-      longitude: "-122.4194",
+      addressLocality: "Remote"
     },
     openingHours: "Mo-Fr 09:00-18:00",
-    priceRange: "$$$$",
+    priceRange: "$1000-$10000/month",
   }
 }
 
@@ -176,33 +173,25 @@ export const generateOrganizationSchema = () => {
     "@type": "Organization",
     name: siteConfig.name,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/logo.png`,
+    logo: `${siteConfig.url}/icon0.svg`,
     description: siteConfig.description,
-    foundingDate: "2024",
+    foundingDate: "2025",
     founders: [
       {
         "@type": "Person",
-        name: "Dent Pilot Founders",
+        name: "Mostafa Khalifa",
       },
     ],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "123 Innovation Drive",
-      addressLocality: "San Francisco",
-      addressRegion: "CA",
-      postalCode: "94105",
-      addressCountry: "US",
-    },
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+1-555-AUTOPILOT",
+      email: "support@dentpilot.dev",
       contactType: "customer service",
-      availableLanguage: "English",
+      availableLanguage: "English, Arabic",
     },
     sameAs: [
       "https://twitter.com/dentpilot",
       "https://linkedin.com/company/dentpilot",
-      "https://github.com/dentpilot",
+      "https://github.com/mostafa-khalifa1212/DentPilot",
     ],
   }
 }

@@ -65,7 +65,7 @@ export function PricingSection() {
   return (
     <section id="pricing" className="py-20 bg-slate-950/60">
       <div className="container-custom">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-20 text-white">Pricing Plans</h2>
+        <h2 className="text-5xl md:text-5xl font-bold text-center mb-20 text-white">Pricing Plans</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {tiers.map((tier, idx) => {
             const Icon = tier.icon;
