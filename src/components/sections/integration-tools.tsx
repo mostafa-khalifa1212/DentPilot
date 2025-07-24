@@ -17,7 +17,9 @@ import {
 
   } from 'simple-icons'
 import { Phone, ArrowRight} from 'lucide-react'
-import { useBooking } from '@/contexts/BookingContext'
+import { useState } from 'react';
+import dynamic from "next/dynamic"
+const BookingStepperForm = dynamic(() => import("../ui/BookingStepperForm"), { ssr: false })
 const tools = [
   { icon: siCalendly },
   { icon: siGooglecalendar },
@@ -36,7 +38,7 @@ const tools = [
 
 export function IntegrationTools() {
   return (
-    <section className="py-16 bg-linear-to-r from-slate-900/50 to-slate-800/50 overflow-hidden">
+    <section id="integration-tools" className="py-16 bg-linear-to-r from-slate-900/50 to-slate-800/50 overflow-hidden">
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12">
@@ -87,7 +89,7 @@ export function IntegrationTools() {
 
 // Automation Setup Section
 export function AutomationSetupSection() {
-  const { setShowBooking } = useBooking();
+  const [showBooking, setShowBooking] = useState(false);
   const steps = [
     {
       title: "Discovery & Analysis",
@@ -112,7 +114,7 @@ export function AutomationSetupSection() {
   ];
 
   return (
-    <section className="py-16 bg-slate-900/30">
+    <section id="automation-setup" className="py-16 bg-slate-900/30">
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12">
@@ -161,12 +163,15 @@ export function AutomationSetupSection() {
             Ready to start your automation journey?
           </p>
           <button
+            type="button"
+            onClick={() => setShowBooking(true)}
             className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-accent-blue to-accent-green rounded-full text-white font-medium shadow-glow hover:shadow-2xl transition-all duration-300"
-            onClick={() => setShowBooking(true)}>
+          >
             Get Started Today
             <ArrowRight className="ml-2 w-5 h-5" />
           </button>
         </div>
+        {showBooking && <BookingStepperForm onClose={() => setShowBooking(false)} />}
       </div>
     </section>
   )

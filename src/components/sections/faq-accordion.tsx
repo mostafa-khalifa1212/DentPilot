@@ -3,8 +3,11 @@
 import { motion } from "framer-motion"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui"
 
-import { useBooking } from "@/contexts/BookingContext"
-import { MessageSquare } from "lucide-react"
+import { Link, MessageSquare } from "lucide-react"
+import { useState } from 'react';
+import dynamic from "next/dynamic"
+
+const BookingStepperForm = dynamic(() => import("../ui/BookingStepperForm"), { ssr: false })
 
 const faqs = [
   {
@@ -66,8 +69,7 @@ const itemVariants = {
 }
 
 export function FaqAccordion() {
-  const { setShowBooking } = useBooking();
-  
+  const [showBooking, setShowBooking] = useState(false);
   const openChat = () => {
     // Trigger chat widget to open
     const chatButton = document.querySelector('[data-chat-trigger]') as HTMLElement;
@@ -87,12 +89,12 @@ export function FaqAccordion() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-center mb-16"
           >
-            <h2 className="text-h1 font-bold mb-6">
+            <h2 className="text-4xl font-bold mb-6">
               Frequently Asked <span className="text-gradient">Questions</span>
             </h2>
             <p className="text-body text-muted-foreground max-w-3xl mx-auto">
               Get answers to the most common questions about AI automation and how 
-              AutoPilotAI can transform your business operations.
+              Dent Pilot can transform your business operations.
             </p>
           </motion.div>
 
@@ -146,17 +148,18 @@ export function FaqAccordion() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center px-6 py-3 bg-accent-blue text-white rounded-full font-medium hover:bg-accent-blue/90 transition-colors"
-                >
-                  Contact Support
+                > <a href="mailto:support@dentpilot.dev">
+                  Contact Support</a>
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center px-6 py-3 border border-accent-blue/50 text-accent-blue rounded-full font-medium hover:bg-accent-blue/10 transition-colors"
-                  onClick={() => setShowBooking(true)}
-                >
-                  Schedule a Call
+                  
+                > 
+                  Schedule a Call 
                 </motion.button>
+                {showBooking && <BookingStepperForm onClose={() => setShowBooking(false)} />}
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

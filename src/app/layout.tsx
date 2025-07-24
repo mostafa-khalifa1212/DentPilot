@@ -4,9 +4,9 @@ import "./globals.css"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import ChatWidget from "@/components/sections/chat-widget"
-import { BookingProvider } from "@/contexts/BookingContext"
-import { GlobalBookingModal } from "@/components/ui"
+
 import { constructMetadata, generateOrganizationSchema, generateWebsiteSchema, generateServiceSchema, generateFAQSchema } from "@/lib/seo"
+
 
 const inter = Inter({
   variable: "--font-code-pro",
@@ -25,6 +25,11 @@ export default function RootLayout({
     <html lang="en">
       <head>
       <meta name="apple-mobile-web-app-title" content="Dent Pilot" />
+      <meta name="theme-color" content="#616161" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link rel="icon" href="/assets/images/favicon.ico" />
+      <link rel="apple-touch-icon" sizes="192x192" href="/assets/images/web-app-manifest-192x192.png" />
+      <link rel="apple-touch-icon" sizes="512x512" href="/assets/images/web-app-manifest-512x512.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -44,15 +49,12 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased dark`}>
-        <BookingProvider>
           <div className="relative flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
             <ChatWidget />
-            <GlobalBookingModal />
           </div>
-        </BookingProvider>
       </body>
     </html>
   )

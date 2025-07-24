@@ -1,0 +1,11 @@
+/* TEAM */
+Developer: Dent Pilot Team
+Contact: support@dentpilot.dev
+
+/* SITE */
+Site: https://dentpilot.dev
+Last update: 2024-06-09
+
+/* TECHNOLOGY */
+Platform: Next.js 15, React 19, Tailwind CSS 4, TypeScript
+Hosting: Netlify, Northflank 

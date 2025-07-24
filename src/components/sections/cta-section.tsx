@@ -4,7 +4,10 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui"
 import { ArrowRight, Sparkles } from "lucide-react"
-import { useBooking } from "@/contexts/BookingContext"
+import { useState } from 'react';
+import dynamic from "next/dynamic"
+
+const BookingStepperForm = dynamic(() => import("../ui/BookingStepperForm"), { ssr: false })
 
 interface CTASectionProps {
   title?: string
@@ -27,7 +30,7 @@ export function CTASection({
   variant = "default",
   showSparkles = true,
 }: CTASectionProps) {
-  const { setShowBooking } = useBooking();
+  const [showBooking, setShowBooking] = useState(false);
 
   return (
     <section className={variant === "compact" ? "py-16" : "section-padding"}>
@@ -94,7 +97,7 @@ export function CTASection({
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3, duration: 0.6 }}
-                  className={variant === "compact" ? "text-h2 font-bold mb-4" : "text-h1 font-bold mb-6"}
+                  className={variant === "compact" ? "text-3xl md:text-4xl font-bold mb-4" : "text-3xl md:text-4xl font-bold mb-6"}
                 >
                   {title}
                 </motion.h2>
@@ -142,6 +145,7 @@ export function CTASection({
                     </Button>
                   )}
                 </motion.div>
+                {showBooking && <BookingStepperForm onClose={() => setShowBooking(false)} />}
 
                 {/* Trust Indicators */}
                 <motion.div
@@ -153,11 +157,7 @@ export function CTASection({
                 >
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-accent-green rounded-full"></div>
-                    <span>No setup fees</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-accent-green rounded-full"></div>
-                    <span>7-day free trial</span>
+                    <span>7-day money back guarantee</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-accent-green rounded-full"></div>

@@ -4,11 +4,8 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui"
 import { ArrowRight, RefreshCw, Heart, Users, TrendingUp, CheckCircle } from "lucide-react"
-import { useBooking } from "@/contexts/BookingContext"
 
 export default function PatientFollowupPage() {
-  const { setShowBooking } = useBooking();
-
   const features = [
     {
       icon: RefreshCw,
@@ -118,7 +115,7 @@ export default function PatientFollowupPage() {
               transition={{ delay: 0.5, duration: 0.8 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Button size="xl" glow className="animate-pulse-glow" onClick={() => setShowBooking(true)}>
+              <Button size="xl" glow className="animate-pulse-glow" onClick={() => window.location.href = '/booking'}>
                 Get Started Today
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
@@ -290,7 +287,7 @@ export default function PatientFollowupPage() {
               nurturing with our intelligent automation workflows.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="xl" glow className="animate-pulse-glow" onClick={() => setShowBooking(true)}>
+              <Button size="xl" glow className="animate-pulse-glow" onClick={() => window.location.href = '/booking'}>
                 Get Started Today
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>

@@ -1,350 +1,360 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Stepper, { Step } from "./Stepper";
-import { DatePicker } from "@heroui/date-picker";
-import { CalendarDate } from "@internationalized/date";
-import { useBooking } from "@/contexts/BookingContext";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Calendar } from '@heroui/calendar';
+import { CalendarDate, today, getLocalTimeZone as getLTZ } from '@internationalized/date';
+import Stepper, { Step } from './Stepper';
+import { createPortal } from 'react-dom';
+
+const step1Schema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  clinicName: z.string().min(1, 'Clinic name is required'),
+});
+
+const step2Schema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+});
+
+const step3Schema = z.object({
+  preferredTime: z.string().min(1, 'Please select a preferred time'),
+  selectedDate: z.string().min(1, 'Please select a date'),
+});
 
 const timeSlots = [
-  "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-  "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM"
+  '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+  '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
 ];
 
+type Step1Fields = z.infer<typeof step1Schema>;
+type Step2Fields = z.infer<typeof step2Schema>;
+type Step3Fields = z.infer<typeof step3Schema>;
+
+type BookingFormData = Step1Fields & Step2Fields & Step3Fields;
+
+// Helper to get the local timezone or fallback
+function getLocalTimeZoneSafe() {
+  try {
+    return typeof getLTZ === 'function' ? getLTZ() : 'Etc/UTC';
+  } catch {
+    return 'Etc/UTC';
+  }
+}
+
+// Helper to safely parse a YYYY-MM-DD string to CalendarDate
+function parseCalendarDate(str: string): CalendarDate | null {
+  if (!str) return null;
+  const parts = str.split('-').map(Number);
+  if (parts.length === 3 && parts.every(n => !isNaN(n))) {
+    return new CalendarDate(parts[0], parts[1], parts[2]);
+  }
+  return null;
+}
+
 export default function BookingStepperForm({ onClose }: { onClose?: () => void }) {
-  const { showAlert } = useBooking();
-  const [step, setStep] = useState(1);
-  const [name, setName] = useState("");
-  const [clinic, setClinic] = useState("");
-  const [email, setEmail] = useState("");
-  const [preferredDate, setPreferredDate] = useState<CalendarDate | null>(null);
-  const [preferredTime, setPreferredTime] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [countdown, setCountdown] = useState(5);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState<Partial<BookingFormData>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
 
-  // Validation state
-  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+  const step1Form = useForm<Step1Fields>({
+    resolver: zodResolver(step1Schema),
+    defaultValues: { name: '', clinicName: '' },
+  });
+  const step2Form = useForm<Step2Fields>({
+    resolver: zodResolver(step2Schema),
+    defaultValues: { email: '' },
+  });
+  const step3Form = useForm<Step3Fields>({
+    resolver: zodResolver(step3Schema),
+    defaultValues: { preferredTime: '', selectedDate: '' },
+  });
 
-  // Countdown effect for auto-close
-  useEffect(() => {
-    if (submitted && step === 4) {
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            if (onClose) onClose();
-            return 0;
+  const handleDateSelect = (date: CalendarDate) => {
+    setSelectedDate(date);
+    step3Form.setValue('selectedDate', date.toString());
+  };
+
+  const formatDate = (date: CalendarDate) => {
+    return new Intl.DateTimeFormat('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    }).format(date.toDate(getLocalTimeZoneSafe()));
+  };
+
+  // Stepper navigation logic
+  const handleStepChange = (step: number) => setCurrentStep(step);
+  const handleFinalStepCompleted = () => { if (onClose) onClose(); };
+
+  // Custom next handler for validation and async actions
+  const handleNext = async (step: number) => {
+    if (step === 1) {
+      const isValid = await step1Form.trigger();
+      if (isValid) {
+        setFormData(prev => ({ ...prev, ...step1Form.getValues() }));
+        return true;
+      }
+      return false;
+    }
+    if (step === 2) {
+      const isValid = await step2Form.trigger();
+      if (isValid) {
+        setFormData(prev => ({ ...prev, ...step2Form.getValues() }));
+        return true;
+      }
+      return false;
+    }
+    if (step === 3) {
+      const isValid = await step3Form.trigger();
+      if (isValid) {
+        setIsSubmitting(true);
+        setSubmitStatus(null);
+        const step3Data = step3Form.getValues();
+        const completeData: BookingFormData = {
+          ...(formData as BookingFormData),
+          ...step3Data,
+        };
+        try {
+          const res = await fetch("https://dentpilot.dev/.netlify/functions/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: completeData.name,
+              clinicName: completeData.clinicName,
+              preferredDate: completeData.selectedDate,
+              preferredTime: completeData.preferredTime,
+              email: completeData.email,
+            }),
+          });
+          const body = await res.text();
+          if (res.ok) {
+            setSubmitStatus('success');
+            setFormData(completeData);
+            return true;
+          } else if (res.status === 409) {
+            setSubmitStatus('error');
+            return false;
+          } else if ([400, 405, 500].includes(res.status)) {
+            setSubmitStatus('error');
+            return false;
+          } else {
+            setSubmitStatus('error');
+            return false;
           }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [submitted, step, onClose]);
-
-  // Validation logic
-  const validateStep = (stepNum: number) => {
-    if (stepNum === 1) {
-      return name.trim().length >= 2 && clinic.trim().length >= 2;
-    }
-    if (stepNum === 2) {
-      return (
-        email.trim().length > 0 &&
-        /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())
-      );
-    }
-    if (stepNum === 3) {
-      return !!preferredDate && preferredTime.trim().length > 0;
+        } catch (err) {
+          setSubmitStatus('error');
+          return false;
+        } finally {
+          setIsSubmitting(false);
+        }
+      }
+      return false;
     }
     return true;
   };
 
-  // Error messages
-  const getFieldError = (field: string) => {
-    if (!touched[field]) return null;
-    if (field === "name" && name.trim().length < 2) return "Name is required (min 2 chars)";
-    if (field === "clinic" && clinic.trim().length < 2) return "Clinic name is required (min 2 chars)";
-    if (field === "email" && (!email.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim()))) return "Valid email is required";
-    if (field === "preferredDate" && !preferredDate) return "Date is required";
-    if (field === "preferredTime" && !preferredTime) return "Time is required";
-    return null;
-  };
-
-  // Style override for HeroUI date-picker popover
-  const datePickerPopoverStyle = `
-    .heroui-date-picker-popover {
-      background: #18181b !important;
-      z-index: 99999 !important;
-      box-shadow: 0 8px 32px 0 rgba(0,0,0,0.25);
-      border-radius: 1rem;
-    }
-  `;
-
-  // Helper to display CalendarDate as string
-  const getDateString = (date: CalendarDate | null) => {
-    if (!date) return "";
-    // CalendarDate to native Date for display
-    const jsDate = date.toDate("UTC");
-    return jsDate.toLocaleDateString();
-  };
-
-  // Helper to get YYYY-MM-DD string
-  const getDateISO = (date: CalendarDate | null) => {
-    if (!date) return "";
-    return date.toString(); // CalendarDate's toString() is YYYY-MM-DD
-  };
-
-  // Handler for step change
-  const handleStepChange = async (nextStep: number) => {
-    setError(null);
-    
-    // On step 3 -> 4, submit to backend
-    if (step === 3 && nextStep === 4) {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const res = await fetch("http://localhost:8888/.netlify/functions/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name,
-            clinicName: clinic,
-            preferredDate: getDateISO(preferredDate),
-            preferredTime,
-          }),
-        });
-
-        if (res.status === 201) {
-          // Success - show success alert and proceed to step 4
-          const dateString = getDateString(preferredDate);
-          showAlert({
-            type: 'success',
-            message: `Successfully booked a call at ${dateString} ${preferredTime}`,
-            duration: 6000
-          });
-          setSubmitted(true);
-          setStep(nextStep);
-        } else if (res.status === 409) {
-          // Duplicate entry
-          showAlert({
-            type: 'error',
-            message: 'You have already booked a call under this name',
-            duration: 8000
-          });
-          setError("You have already booked a call under this name");
-        } else if (res.status === 400) {
-          // Bad request
-          const data = await res.json();
-          showAlert({
-            type: 'error',
-            message: data.message || 'Invalid booking data. Please check your information.',
-            duration: 6000
-          });
-          setError(data.message || "Invalid booking data");
-        } else if (res.status === 500) {
-          // Server error
-          showAlert({
-            type: 'error',
-            message: 'Server error. Please try again later.',
-            duration: 6000
-          });
-          setError("Server error. Please try again later.");
-        } else {
-          // Other errors
-          const data = await res.json();
-          showAlert({
-            type: 'error',
-            message: data.message || 'An unexpected error occurred.',
-            duration: 6000
-          });
-          setError(data.message || "An unexpected error occurred");
-        }
-      } catch {
-        // Network error
-        showAlert({
-          type: 'error',
-          message: 'Network error. Please check your connection and try again.',
-          duration: 6000
-        });
-        setError("Network error. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-    
-    // On step 4, when 'Complete' is pressed, close the modal
-    if (step === 4 && nextStep === 5) {
-      if (onClose) onClose();
-      return;
-    }
-    
-    setStep(nextStep);
-  };
-
-  // Custom nextButtonProps for validation
-  const nextButtonProps = {
-    disabled: !validateStep(step),
-  };
-
-  // Mark fields as touched on blur
-  const handleBlur = (field: string) => setTouched(t => ({ ...t, [field]: true }));
-
-  return (
+  return createPortal(
     <>
-      <style>{datePickerPopoverStyle}</style>
-      
-      {/* Countdown Timer */}
-      {submitted && step === 4 && (
-        <div className="absolute top-4 right-4 z-10">
-          <div className="bg-black/40 backdrop-blur-sm rounded-full px-3 py-1 text-white text-sm font-medium">
-            Closing in {countdown}s
-          </div>
-        </div>
-      )}
-      
-      <div className="w-full text-center mb-4">
-        <h2 className="text-2xl font-bold text-white">Book a Call</h2>
-      </div>
-      
-      <Stepper
-        initialStep={1}
-        onStepChange={handleStepChange}
-        onFinalStepCompleted={() => setSubmitted(true)}
-        backButtonText="Previous"
-        nextButtonText="Next"
-        nextButtonProps={nextButtonProps}
-      >
-        {/* Step 1: Name & Clinic Name */}
-        <Step>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Full Name</label>
-              <input
-                value={name}
-                onChange={e => setName(e.target.value)}
-                onBlur={() => handleBlur("name")}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-accent-blue outline-none"
-                placeholder="Your Name"
-                autoFocus
-              />
-              {getFieldError("name") && (
-                <p className="text-red-400 text-xs mt-1">{getFieldError("name")}</p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Clinic Name</label>
-              <input
-                value={clinic}
-                onChange={e => setClinic(e.target.value)}
-                onBlur={() => handleBlur("clinic")}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-accent-blue outline-none"
-                placeholder="Your Clinic Name"
-              />
-              {getFieldError("clinic") && (
-                <p className="text-red-400 text-xs mt-1">{getFieldError("clinic")}</p>
-              )}
-            </div>
-          </div>
-        </Step>
-        {/* Step 2: Email */}
-        <Step>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Email</label>
-              <input
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                onBlur={() => handleBlur("email")}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-accent-blue outline-none"
-                placeholder="you@email.com"
-                type="email"
-              />
-              {getFieldError("email") && (
-                <p className="text-red-400 text-xs mt-1">{getFieldError("email")}</p>
-              )}
-            </div>
-          </div>
-        </Step>
-        {/* Step 3: Preferred Date & Time */}
-        <Step>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Preferred Date</label>
-              <DatePicker
-                value={preferredDate}
-                onChange={setPreferredDate}
-                onBlur={() => handleBlur("preferredDate")}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white focus:ring-2 focus:ring-accent-blue outline-none"
-              />
-              {getFieldError("preferredDate") && (
-                <p className="text-red-400 text-xs mt-1">{getFieldError("preferredDate")}</p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Preferred Time</label>
-              <select
-                value={preferredTime}
-                onChange={e => setPreferredTime(e.target.value)}
-                onBlur={() => handleBlur("preferredTime")}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white focus:ring-2 focus:ring-accent-blue outline-none"
-              >
-                <option value="">Select a time</option>
-                {timeSlots.map((slot) => (
-                  <option key={slot} value={slot}>{slot}</option>
-                ))}
-              </select>
-              {getFieldError("preferredTime") && (
-                <p className="text-red-400 text-xs mt-1">{getFieldError("preferredTime")}</p>
-              )}
-            </div>
-            {error && (
-              <div className="text-center text-red-400 mt-4">{error}</div>
-            )}
-          </div>
-        </Step>
-        {/* Step 4: Loading State or Confirmation */}
-        <Step>
-          <div className="flex flex-col items-center justify-center min-h-[200px] text-center space-y-4">
-            {loading ? (
-              <>
-                <div className="relative">
-                  {/* Brand-colored spinner */}
-                  <div className="w-16 h-16 border-4 border-accent-blue/20 rounded-full">
-                    <div className="w-16 h-16 border-4 border-accent-blue border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                  {/* Additional accent colors */}
-                  <div className="absolute inset-0 w-16 h-16 border-4 border-accent-green/30 rounded-full animate-pulse"></div>
-                  <div className="absolute inset-0 w-16 h-16 border-4 border-accent-orange/20 rounded-full animate-ping"></div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm" onClick={onClose}>
+        <div className="relative w-full max-w-lg" onClick={e => e.stopPropagation()}>
+          {/* Close button */}
+          <button
+            type="button"
+            className="absolute top-4 right-4 z-10 text-white bg-gray-900/40 rounded-full p-2 hover:bg-gray-900/70 focus:outline-none"
+            onClick={onClose}
+            aria-label="Close booking form"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <Stepper
+            initialStep={1}
+            onStepChange={handleStepChange}
+            onFinalStepCompleted={handleFinalStepCompleted}
+            backButtonText="Previous"
+            nextButtonText="Next"
+            validateStep={handleNext}
+            title="Book a Call"
+          >
+            {/* Step 1: Name and Clinic */}
+            <Step>
+              <div className="space-y-6">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-white mb-2">Let's get to know you</h3>
+                  <p className="text-gray-300">Tell us about yourself and your clinic</p>
                 </div>
-                <div className="text-xl font-medium text-white/80">Setting up your booking...</div>
-                <div className="text-sm text-white/60">Please wait while we process your request</div>
-              </>
-            ) : submitted ? (
-              <>
-                <div className="text-4xl">🎉</div>
-                <h3 className="text-2xl font-bold text-white">Thank You!</h3>
-                <p className="text-body text-muted-foreground">
-                  Your booking is confirmed.<br />
-                  <span className="font-semibold">{name}</span> from <span className="font-semibold">{clinic}</span><br />
-                  <span className="font-semibold">{email}</span><br />
-                  <span className="font-semibold">{getDateString(preferredDate)}</span> at <span className="font-semibold">{preferredTime}</span>
-                </p>
-                <div className="mt-4 text-accent-blue">We look forward to meeting you!</div>
-              </>
-            ) : (
-              <>
-                <div className="text-4xl">⚠️</div>
-                <h3 className="text-2xl font-bold text-white">Something went wrong</h3>
-                <p className="text-body text-red-400">Please try again or contact support.</p>
-              </>
-            )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Full Name *</label>
+                  <input
+                    {...step1Form.register('name')}
+                    type="text"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent text-white placeholder-gray-400"
+                    placeholder="Enter your full name"
+                  />
+                  {step1Form.formState.errors.name && (
+                    <p className="text-red-400 text-sm mt-1">{step1Form.formState.errors.name.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Clinic Name *</label>
+                  <input
+                    {...step1Form.register('clinicName')}
+                    type="text"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent text-white placeholder-gray-400"
+                    placeholder="Enter your clinic name"
+                  />
+                  {step1Form.formState.errors.clinicName && (
+                    <p className="text-red-400 text-sm mt-1">{step1Form.formState.errors.clinicName.message}</p>
+                  )}
+                </div>
+              </div>
+            </Step>
+            {/* Step 2: Email */}
+            <Step>
+              <div className="space-y-6">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-white mb-2">Contact Information</h3>
+                  <p className="text-gray-300">How can we reach you?</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Email Address *</label>
+                  <input
+                    {...step2Form.register('email')}
+                    type="email"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent text-white placeholder-gray-400"
+                    placeholder="Enter your email address"
+                  />
+                  {step2Form.formState.errors.email && (
+                    <p className="text-red-400 text-sm mt-1">{step2Form.formState.errors.email.message}</p>
+                  )}
+                </div>
+              </div>
+            </Step>
+            {/* Step 3: Time and Calendar */}
+            <Step>
+              <div className="space-y-6">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-white mb-2">Schedule Your Call</h3>
+                  <p className="text-gray-300">When would you like to talk?</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Preferred Time *</label>
+                  <select
+                    {...step3Form.register('preferredTime')}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent text-white"
+                  >
+                    <option value="" className="text-gray-400">Select your preferred time</option>
+                    {timeSlots.map((slot) => (
+                      <option key={slot} value={slot} className="text-white">
+                        {slot}
+                      </option>
+                    ))}
+                  </select>
+                  {step3Form.formState.errors.preferredTime && (
+                    <p className="text-red-400 text-sm mt-1">{step3Form.formState.errors.preferredTime.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Preferred Date *</label>
+                  <input {...step3Form.register('selectedDate')} type="hidden" />
+                  <button
+                    type="button"
+                    onClick={() => setShowCalendar(true)}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#1e90ff] focus:border-transparent text-left text-white"
+                  >
+                    {selectedDate ? formatDate(selectedDate) : 'Select a date'}
+                  </button>
+                  {step3Form.formState.errors.selectedDate && (
+                    <p className="text-red-400 text-sm mt-1">{step3Form.formState.errors.selectedDate.message}</p>
+                  )}
+                </div>
+                {isSubmitting && (
+                  <div className="text-center text-blue-400">Submitting your booking request...</div>
+                )}
+                {submitStatus === 'error' && (
+                  <div className="text-center text-red-400">Failed to submit booking. Please try again.</div>
+                )}
+              </div>
+            </Step>
+            {/* Step 4: Thank You */}
+            <Step>
+              <div className="space-y-6 text-center">
+                {isSubmitting ? (
+                  <div className="flex flex-col items-center justify-center min-h-[200px] text-center space-y-4">
+                    <div className="relative">
+                      <div className="w-16 h-16 border-4 border-accent-blue/20 rounded-full">
+                        <div className="w-16 h-16 border-4 border-accent-blue border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                      <div className="absolute inset-0 w-16 h-16 border-4 border-accent-green/30 rounded-full animate-pulse"></div>
+                      <div className="absolute inset-0 w-16 h-16 border-4 border-accent-orange/20 rounded-full animate-ping"></div>
+                    </div>
+                    <div className="text-xl font-medium text-white/80">Setting up your booking...</div>
+                    <div className="text-sm text-white/60">Please wait while we process your request</div>
+                  </div>
+                ) : submitStatus === 'success' ? (
+                  <>
+                    <div className="text-6xl mb-4">🎉</div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Thank You!</h3>
+                    <p className="text-gray-300 mb-6">
+                      Your booking request has been submitted successfully. We'll be in touch soon to confirm your call.
+                    </p>
+                    <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                      <p className="text-green-300 text-sm">
+                        ✅ Booking confirmed for {
+                          formData.selectedDate && typeof formData.selectedDate === 'string' && parseCalendarDate(formData.selectedDate)
+                            ? formatDate(parseCalendarDate(formData.selectedDate)!)
+                            : 'N/A'
+                        } at {formData.preferredTime || 'N/A'}
+                      </p>
+                    </div>
+                  </>
+                ) : submitStatus === 'error' ? (
+                  <div className="text-center text-red-400">Failed to submit booking. Please try again.</div>
+                ) : null}
+              </div>
+            </Step>
+          </Stepper>
+        </div>
+      </div>
+      {showCalendar && createPortal(
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 shadow-xl">
+            <Calendar
+              aria-label="Select date"
+              value={selectedDate}
+              onChange={(date: CalendarDate) => {
+                handleDateSelect(date);
+                setShowCalendar(false);
+              }}
+              minValue={today(getLocalTimeZoneSafe())}
+              classNames={{
+                base: "bg-gray-800",
+                headerWrapper: "bg-gray-800",
+                title: "text-white",
+                gridHeader: "bg-gray-800",
+                gridHeaderRow: "bg-gray-800",
+                gridHeaderCell: "text-gray-300",
+                gridBody: "bg-gray-800",
+                gridBodyRow: "bg-gray-800",
+                cell: "text-white hover:bg-gray-700",
+                cellButton: [
+                  "data-[selected=true]:bg-[#1e90ff]",
+                  "data-[selected=true]:text-white",
+                  "data-[hover=true]:bg-gray-700"
+                ],
+                prevButton: "text-white hover:bg-gray-700",
+                nextButton: "text-white hover:bg-gray-700"
+              }}
+            />
           </div>
-        </Step>
-      </Stepper>
-    </>
+        </div>,
+        document.body
+      )}
+    </>,
+    document.body
   );
 }

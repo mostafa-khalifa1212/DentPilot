@@ -4,7 +4,7 @@ import { useState, ChangeEvent, KeyboardEvent, useRef, RefObject, useEffect } fr
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, MessageCircle, Send } from 'lucide-react'
 import useOutsideClick from '../../hooks/useOutsideClick'
-import { BrainAvatar } from '@/components/ui'
+import dynamic from "next/dynamic"
 
 
 type Message = {
@@ -33,9 +33,10 @@ export default function ChatWidget() {
     setInput('')
     setLoading(true)
 
+    // --- Begin commented out AI/webhook logic ---
+    /*
     try {
       console.log('Sending message to webhook:', userMessage)
-      
       // Try different request formats
       const requestBody = { 
         text: userMessage,
@@ -43,11 +44,9 @@ export default function ChatWidget() {
         input: userMessage,
         query: userMessage
       };
-      
       console.log('Request body:', requestBody)
-      
-      // Use test webhook for now until production is fixed
-      const response = await fetch('http://localhost:5678/webhook-test/b7b63b95-aa55-48e1-b9b2-83d472f136b2', {
+      // Use production webhook for chatbot
+      const response = await fetch('https://p01--dentpilot-n8n--x5qjn9m4bxjb.code.run/webhook/b7b63b95-aa55-48e1-b9b2-83d472f136b2', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -55,10 +54,8 @@ export default function ChatWidget() {
         },
         body: JSON.stringify({ message: userMessage }),
       })
-
       console.log('Response status:', response.status)
       console.log('Response headers:', response.headers)
-
       if (!response.ok) {
         // Try to get error details from response
         let errorDetails = '';
@@ -69,8 +66,7 @@ export default function ChatWidget() {
           errorDetails = ' - Could not read error response';
         }
         throw new Error(`HTTP error! status: ${response.status}${errorDetails}`)
-      } 
-
+      }
       // Handle different response types
       let data;
       const responseText = await response.text();
@@ -78,11 +74,9 @@ export default function ChatWidget() {
       console.log('Response text:', responseText);
       console.log('Response status:', response.status);
       console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-      
       try {
         data = JSON.parse(responseText);
         console.log('Response data:', data);
-        
         // Handle array responses (like [{"output": "..."}])
         if (Array.isArray(data) && data.length > 0) {
           data = data[0]; // Take the first item from the array
@@ -92,10 +86,8 @@ export default function ChatWidget() {
         console.log('Response is not JSON, treating as plain text');
         data = { output: responseText };
       }
-
       // Handle different response formats
       let botReply = 'Hi! I\'m Dent Pilot Assistant. How can I help you today?'
-      
       if (data.output) {
         botReply = data.output
       } else if (data.reply) {
@@ -111,14 +103,11 @@ export default function ChatWidget() {
       } else if (data.body && data.body.reply) {
         botReply = data.body.reply
       }
-
       setMessages([...newMessages, { type: 'bot', text: botReply }])
     } catch (error) {
       console.error('Chat error:', error)
-      
       // Fallback responses based on user input
       let fallbackReply = 'Hi! I\'m Dent Pilot Assistant. How can I help you today?'
-      
       const userInput = userMessage.toLowerCase()
       if (userInput.includes('hello') || userInput.includes('hi')) {
         fallbackReply = 'Hello! Welcome to Dent Pilot. I\'m here to help you with dental practice automation. What would you like to know?'
@@ -141,11 +130,21 @@ export default function ChatWidget() {
       } else if (userInput.includes('patient') || userInput.includes('onboarding')) {
         fallbackReply = 'Patient onboarding includes pre-visit instructions, digital medical forms, ID & insurance uploads, and automated preparation workflows. Everything is HIPAA compliant.'
       }
-
       setMessages([...newMessages, { type: 'bot', text: fallbackReply }])
     } finally {
       setLoading(false)
     }
+    */
+    // --- End commented out AI/webhook logic ---
+
+    // Always reply with default under construction message
+    setTimeout(() => {
+      setMessages([
+        ...newMessages,
+        { type: 'bot', text: 'I&apos;m still under construction, Come back later and I will answer all of your questions... hopefully😞' }
+      ])
+      setLoading(false)
+    }, 600)
   }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -175,6 +174,8 @@ export default function ChatWidget() {
       setMessages([{ type: 'bot', text: 'Hi! I\'m Dent Pilot Assistant. How can I help you today?' }])
     }
   }
+
+  const BrainAvatar = dynamic(() => import("../ui/BrainAvatar"), { ssr: false })
 
   return (
     <>

@@ -4,19 +4,20 @@ import Image from "next/image"
 
 const footerLinks = {
   services: [
-    { name: "Process Automation", href: "/services/process-automation" },
-    { name: "AI Integration", href: "/services/ai-integration" },
-    { name: "Workflow Optimization", href: "/services/workflow-optimization" },
-    { name: "Custom Solutions", href: "/services/custom-solutions" },
+    { name: "AI Receptionist", href: "/services/ai-receptionist" },
+    { name: "Patient Followup", href: "/services/patient-followup" },
+    { name: "Patient Onboarding", href: "/services/patient-onboarding" },
+    { name: "All Services", href: "#services" },
+    { name: "Integration Tools", href: "#integration-tools" },
+    { name: "Automation Setup", href: "#automation-setup" },
+    { name: "Pricing", href: "#pricing" },
   ],
   company: [
-    { name: "About Us", href: "/about" },
-    { name: "Case Studies", href: "/case-studies" },
     { name: "Blog", href: "/blog" },
     { name: "Careers", href: "/careers" },
   ],
   support: [
-    { name: "FAQ", href: "/faq" },
+    { name: "FAQ", href: "#faq" },
     { name: "Contact", href: "/contact" },
     { name: "Privacy Policy", href: "/privacy" },
     { name: "Terms of Service", href: "/terms" },

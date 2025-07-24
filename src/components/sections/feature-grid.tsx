@@ -4,16 +4,10 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui"
 import { 
-  Users, 
   UserPlus, 
-  Stethoscope, 
   RefreshCw, 
   UserCheck,
-  Bell,
-  BarChart3,
   MessageSquare,
-  Settings,
-  Zap,
   Target,
   ArrowRight,
   PhoneCall
@@ -42,41 +36,6 @@ const features = [
     detailsLink: "/services/patient-onboarding",
   },
   {
-    icon: Target,
-    title: "Lead Generation & Nurturing",
-    description: "Google Maps scraping, lead capture automation, nurturing sequences, and social media lead sync to fill your pipeline.",
-    isTopSeller: false,
-    detailsLink: null,
-  },
-  {
-    icon: Stethoscope,
-    title: "In-Treatment Experience",
-    description: "QR-code form autofill, digital signatures, and seamless in-clinic workflow automation.",
-    isTopSeller: false,
-    detailsLink: null,
-  },
-  {
-    icon: UserCheck,
-    title: "Patient Reactivation",
-    description: "Inactive patient campaigns, birthday/anniversary automations, and AI-generated win-back sequences.",
-    isTopSeller: false,
-    detailsLink: null,
-  },
-  {
-    icon: Bell,
-    title: "Team Automation",
-    description: "Daily schedule digests, Slack/WhatsApp alerts, automated invoicing, and internal workflow optimization.",
-    isTopSeller: false,
-    detailsLink: null,
-  },
-  {
-    icon: BarChart3,
-    title: "Analytics & Reporting",
-    description: "Weekly KPI dashboards, lead source analytics, revenue tracking, and performance insights.",
-    isTopSeller: false,
-    detailsLink: null,
-  },
-  {
     icon: MessageSquare,
     title: "Live Chat & Chatbot",
     description: "AI chatbot for FAQs, appointment booking, and 24/7 patient support automation.",
@@ -84,26 +43,21 @@ const features = [
     detailsLink: null,
   },
   {
-    icon: Settings,
-    title: "Seamless Integrations",
-    description: "Connect with Google Calendar, Notion, Sheets, Stripe, Gmail, Typeform, Calendly, Slack, and more.",
+    icon: Target,
+    title: "Lead Generation & Nurturing",
+    description: "Google Maps scraping, lead capture automation, nurturing sequences, and social media lead sync to fill your pipeline.",
     isTopSeller: false,
     detailsLink: null,
   },
+  
   {
-    icon: Zap,
-    title: "HIPAA Compliant",
-    description: "Bank-grade security with SOC 2 compliance, end-to-end encryption, and audit trails for patient data.",
+    icon: UserCheck,
+    title: "Patient Reactivation",
+    description: "Inactive patient campaigns, birthday/anniversary automations, and AI-generated win-back sequences.",
     isTopSeller: false,
     detailsLink: null,
-  },
-  {
-    icon: Users,
-    title: "Built by Dentists",
-    description: "AI systems designed specifically for dental practices by dental professionals who understand your workflow.",
-    isTopSeller: false,
-    detailsLink: null,
-  },
+  }
+  
 ]
 
 const containerVariants = {
@@ -137,7 +91,7 @@ export function FeatureGrid() {
           transition={{ duration: 0.8, ease: [0.6, 0.01, 0.05, 0.9] }}
           className="text-center mb-16"
         >
-          <h2 className="text-h1 font-bold mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Why Choose <span className="text-gradient">Dent Pilot</span>
           </h2>
           <p className="text-body text-muted-foreground max-w-3xl mx-auto">

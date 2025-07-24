@@ -2,7 +2,7 @@ import { Metadata } from "next"
 
 export const siteConfig = {
   name: "Dent Pilot",
-  description: "Transform your dental practice with cutting-edge AI automation. Dent Pilot helps clinics streamline operations, boost revenue, and fill chairs with intelligent automation solutions.",
+  description: "Transform your dental practice with cutting-edge Dental AI Automation and Dental AI Agents. Dent Pilot helps clinics streamline operations, boost revenue, and fill chairs with intelligent automation solutions.",
   url: process.env.NEXT_PUBLIC_APP_URL || "https://dentpilot.dev",
   ogImage: "/assets/images/DentPilotLogo.png",
   author: "Dent Pilot Team",
@@ -17,6 +17,10 @@ export const siteConfig = {
     "productivity tools",
     "intelligent automation",
     "machine learning",
+    "Dental AI Automation",
+    "dental ai automation",
+    "Dental AI Agents",
+    "dental ai agents",
   ],
 }
 

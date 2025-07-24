@@ -4,15 +4,10 @@ import { siteConfig } from '@/lib/seo'
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
     '',
-    '/about',
-    '/services',
-    '/services/process-automation',
-    '/services/ai-integration', 
-    '/services/workflow-optimization',
-    '/services/custom-solutions',
-    '/case-studies',
+    '/services/ai-receptionist',
+    '/services/patient-followup',
+    '/services/patient-onboarding',
     '/pricing',
-    '/blog',
     '/contact',
     '/faq',
     '/privacy',

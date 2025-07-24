@@ -16,6 +16,7 @@ function getGoogleCredentialsFromEnv() {
     auth_provider_x509_cert_url: process.env.GOOGLE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL,
     universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN,
+    google_sheet_id: process.env.GOOGLE_SHEET_ID
   };
 }
 
@@ -28,14 +29,14 @@ async function appendDataToSheet(data: string[]) {
   const sheets = google.sheets({ version: 'v4', auth });
 
   await sheets.spreadsheets.values.append({
-    spreadsheetId: '1D7kkuhX5ZAJ9GYU4-Y3BQhLKzVawVbMT8GQlBID9VNo',
-    range: 'Sheet3!A:D',
+    spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    range: 'Sheet3!A:E',
     valueInputOption: 'RAW',
     requestBody: { values: [data] },
   });
 }
 
-async function isDuplicateEntry(name: string, clinicName: string) {
+async function isDuplicateEntry(name: string, clinicName: string, email: string) {
   const auth = new google.auth.GoogleAuth({
     credentials: getGoogleCredentialsFromEnv(),
     scopes: SCOPES,
@@ -44,15 +45,20 @@ async function isDuplicateEntry(name: string, clinicName: string) {
   const sheets = google.sheets({ version: 'v4', auth });
 
   const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1D7kkuhX5ZAJ9GYU4-Y3BQhLKzVawVbMT8GQlBID9VNo',
-    range: 'Sheet3!A:D',
+    spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    range: 'Sheet3!A:E',
   });
 
   const rows = response.data.values || [];
   for (const row of rows.slice(1)) {
     const rowName = (row[1] || '').trim().toLowerCase();
     const rowClinic = (row[2] || '').trim().toLowerCase();
-    if (rowName === name.trim().toLowerCase() && rowClinic === clinicName.trim().toLowerCase()) {
+    const rowEmail = (row[3] || '').trim().toLowerCase();
+    if (
+      rowName === name.trim().toLowerCase() &&
+      rowClinic === clinicName.trim().toLowerCase() &&
+      rowEmail === email.trim().toLowerCase()
+    ) {
       return true;
     }
   }
@@ -82,12 +88,12 @@ export const handler: Handler = async (
   }
 
   try {
-    const { name, clinicName, preferredDate, preferredTime } = JSON.parse(
+    const { name, clinicName, preferredDate, preferredTime, email } = JSON.parse(
       event.body || '{}'
     );
     const timestamp = new Date().toISOString();
 
-    if (!name || !clinicName || !preferredDate || !preferredTime) {
+    if (!name || !clinicName || !preferredDate || !preferredTime || !email) {
       return {
         statusCode: 400,
         headers,
@@ -95,7 +101,7 @@ export const handler: Handler = async (
       };
     }
 
-    const duplicate = await isDuplicateEntry(name, clinicName);
+    const duplicate = await isDuplicateEntry(name, clinicName, email);
     if (duplicate) {
       return {
         statusCode: 409,
@@ -108,6 +114,7 @@ export const handler: Handler = async (
       timestamp,
       name,
       clinicName,
+      email,
       preferredDate,
       preferredTime,
     ]);

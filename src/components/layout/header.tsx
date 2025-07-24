@@ -6,23 +6,23 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
-import { useBooking } from "@/contexts/BookingContext"
+import BookingStepperForm from '../ui/BookingStepperForm';
 
 const navigation = [
+  { name: "Integration Tools", href: "#integration-tools" },
+  { name: "How We Do It", href: "#automation-setup" },
   { name: "Services", href: "#services" },
-  { name: "Case Studies", href: "#case-studies" },
-  { name: "About", href: "#about" },
   { name: "Pricing", href: "#pricing" },
   { name: "FAQ", href: "#faq" },
 ]
 
 export function Header() {
-  const { setShowBooking } = useBooking();
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showHeader, setShowHeader] = useState(true)
   const lastScrollY = useRef(0)
   const ticking = useRef(false)
+  const [showBooking, setShowBooking] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,7 +69,7 @@ export function Header() {
       <nav className="container-custom flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <Image src="/assets/images/DentPilotLogo.png" alt="Dent Pilot logo" width={160} height={70} className="rounded-lg" />
+          <Image src="/assets/images/DentPilotLogo.png" alt="Dent Pilot logo" width={160} height={70} className="rounded-lg" priority />
         </Link>
 
         {/* Desktop Navigation */}
@@ -142,6 +142,7 @@ export function Header() {
           </div>
         </div>
       )}
+      {showBooking && <BookingStepperForm onClose={() => setShowBooking(false)} />}
     </header>
   )
 } 
