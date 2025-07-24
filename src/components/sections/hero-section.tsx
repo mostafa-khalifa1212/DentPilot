@@ -126,9 +126,11 @@ export function HeroSection() {
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
             {showBooking && <BookingStepperForm onClose={() => setShowBooking(false)} />}
-            <Button size="lg" variant="outline" asChild>
-              <Link href="#case-studies">View Success Stories</Link>
+            <Link href="#case-studies" passHref>
+            <Button size="lg" variant="outline">
+              View Success Stories
             </Button>
+            </Link>
           </motion.div>
         </div>
       </div>

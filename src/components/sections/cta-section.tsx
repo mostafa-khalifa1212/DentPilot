@@ -23,7 +23,7 @@ interface CTASectionProps {
 export function CTASection({
   title = "Ready to Transform Your Dental Practice?",
         description = "Join thousands of clinics already automating their workflows with Dent Pilot. Start your automation journey today.",
-  primaryText = "Start Free Trial",
+  primaryText = "Book a Free Trial",
   primaryHref = "#contact",
   secondaryText = "Schedule Demo",
 
@@ -123,17 +123,19 @@ export function CTASection({
                   transition={{ delay: 0.5, duration: 0.6 }}
                   className="flex flex-col sm:flex-row gap-4 justify-center"
                 >
+                  <Link href={primaryHref} passHref>
                   <Button 
                     size={variant === "compact" ? "lg" : "xl"} 
                     glow 
-                    className="animate-pulse-glow" 
-                    asChild
+                    className="animate-pulse-glow"
+                    onClick={() => setShowBooking(true)}
                   >
-                    <Link href={primaryHref}>
+                    
                       {primaryText}
                       <ArrowRight className="ml-2 w-5 h-5" />
-                    </Link>
+                    
                   </Button>
+                  </Link>
                   
                   {secondaryText && (
                     <Button 
