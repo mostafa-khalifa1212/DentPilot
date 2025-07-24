@@ -141,7 +141,7 @@ export default function ChatWidget() {
     setTimeout(() => {
       setMessages([
         ...newMessages,
-        { type: 'bot', text: 'I&apos;m still under construction, Come back later and I will answer all of your questions... hopefully😞' }
+        { type: 'bot', text: 'I\'m still under construction, Come back later and I will answer all of your questions... hopefully😞' }
       ])
       setLoading(false)
     }, 600)

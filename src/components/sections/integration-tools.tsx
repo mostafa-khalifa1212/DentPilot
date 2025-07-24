@@ -98,7 +98,7 @@ export function AutomationSetupSection() {
     },
     {
       title: "Custom Tailored Knowledge Base",
-      description: "We create a comprehensive knowledge base tailored to your clinic&apos;s specific procedures, policies, prices  and patient information.",
+      description: "We create a comprehensive knowledge base tailored to your clinic's specific procedures, policies, prices and patient information.",
       placeholder: "🧠",
     },
     {
@@ -122,7 +122,7 @@ export function AutomationSetupSection() {
             Our 4-Step <span className="text-gradient">Automation Setup</span>
           </h2>
           <p className="text-body text-muted-foreground max-w-2xl mx-auto">
-            We don&apos;t just install software—we transform your entire workflow with a proven process that ensures success.
+            We don&apos;t just install software, we transform your entire workflow with a proven process that ensures success.
           </p>
         </div>
 

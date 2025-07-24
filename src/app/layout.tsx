@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/footer"
 import ChatWidget from "@/components/sections/chat-widget"
 
 import { constructMetadata, generateOrganizationSchema, generateWebsiteSchema, generateServiceSchema, generateFAQSchema } from "@/lib/seo"
+import Script from "next/script";
 
 
 const inter = Inter({
@@ -24,6 +25,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-S0R52HP7TJ"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-S0R52HP7TJ');
+          `}
+        </Script>
       <meta name="apple-mobile-web-app-title" content="Dent Pilot" />
       <meta name="theme-color" content="#616161" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
